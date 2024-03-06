@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BingoBook</title>
+    <!-- Add your CSS file link here -->
+    <style>
+        body {
+            background-color: #121212;
+            /* Dark background */
+            color: #e0e0e0;
+            /* Light text */
+            font-family: 'Arial', sans-serif;
+            /* Optional: Change the font family */
+        }
+
+        h1 {
+            color: #ffffff;
+            /* Bright white for headings */
+        }
+
+        form {
+            margin-bottom: 20px;
+            /* Add some spacing below the form */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        button {
+            background-color: #1e1e1e;
+            /* Slightly lighter dark for input fields and buttons */
+            border: 1px solid #333333;
+            /* Dark border for elements */
+            color: #ffffff;
+            /* White text */
+            padding: 10px;
+            /* Add some padding */
+            margin-right: 5px;
+            /* Add some margin between the form elements */
+        }
+
+        button {
+            cursor: pointer;
+            /* Change cursor to pointer when hovering over buttons */
+        }
+
+        table {
+            width: 100%;
+            /* Make the table take the full width */
+            border-collapse: collapse;
+            /* Collapse the borders for a clean look */
+        }
+
+        th,
+        td {
+            text-align: left;
+            /* Align text to the left */
+            padding: 12px;
+            /* Add padding to table cells */
+            border-bottom: 1px solid #333333;
+            /* Dark border for the table rows */
+        }
+
+        th {
+            background-color: #1e1e1e;
+            /* Slightly lighter dark for table headers */
+        }
+
+        button {
+            background-color: #282828;
+            /* Dark background for buttons */
+            border: none;
+            /* No border for buttons */
+            color: #dcdcdc;
+            /* Slightly off-white color for the button text */
+            padding: 5px 15px;
+            /* Padding inside the buttons */
+            margin: 5px;
+            /* Margin around buttons */
+            border-radius: 5px;
+            /* Rounded corners for buttons */
+            text-transform: uppercase;
+            /* Uppercase text for buttons */
+            font-weight: bold;
+            /* Bold font weight for buttons */
+        }
+
+        button:hover {
+            background-color: #3a3a3a;
+            /* Lighter background on hover */
+        }
+
+        img {
+            max-width: 100px;
+            /* Limit image width */
+            height: auto;
+            /* Maintain aspect ratio */
+            margin-right: 10px;
+            /* Space out images */
+        }
+
+        .image-wrapper {
+            display: inline-block;
+            position: relative;
+            margin-right: 10px;
+            /* Adjust or remove margin as needed for your layout */
+        }
+
+        .image-wrapper img {
+            /* If you want a fixed size for images, set the width and height properties */
+            width: 100px;
+            /* Example fixed width */
+            height: auto;
+            /* Maintain aspect ratio */
+            object-fit: cover;
+            /* Cover the area of the image wrapper */
+        }
+
+        /* Style for the full-size image preview container */
+        .image-preview {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Positioned relative to the viewport */
+            top: 50%;
+            /* Center the preview in the middle of the screen vertically */
+            left: 50%;
+            /* Center the preview in the middle of the screen horizontally */
+            transform: translate(-50%, -50%);
+            /* Adjust the position to truly center it */
+            z-index: 100;
+            /* Ensure it's above other items */
+            border: 3px solid white;
+            /* Optional: adds a border around the preview */
+        }
+
+        /* Full-size image style */
+        .image-preview img {
+            max-width: 90vw;
+            /* Limit the width to 90% of the viewport width */
+            max-height: 90vh;
+            /* Limit the height to 90% of the viewport height */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            /* Optional: adds a shadow for better visibility */
+        }
+
+        .delete-image {
+            width: 20px;
+            /* Example fixed width for the delete button */
+            height: 20px;
+            /* Example fixed height for the delete button */
+            line-height: 20px;
+            /* Center the "X" text vertically */
+            text-align: center;
+            /* Center the "X" text horizontally */
+            font-size: 14px;
+            /* Adjust the font size of the "X" as needed */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            /* Optional shadow for better visibility */
+        }
+
+        button.delete-image {
+            position: absolute;
+            /* Position the button over the image */
+            top: 0;
+            /* Align to the top-right corner of the image */
+            right: 0;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            /* Makes the button circular */
+            padding: 0 5px;
+            cursor: pointer;
+            opacity: 0.6;
+            /* Slightly transparent */
+            /* Additional styles to ensure the button does not affect the layout */
+            transform: translate(50%, -50%);
+            /* Center the button on the top right corner */
+            z-index: 10;
+            /* Ensures the button is above other elements */
+        }
+
+        button.add-image {
+            background-color: #4CAF50;
+            /* Green background color for add button */
+            color: white;
+            /* White text */
+            border: none;
+            /* No border */
+            padding: 10px 20px;
+            /* Padding inside the button */
+            margin-top: 10px;
+            /* Margin at the top of the button */
+            cursor: pointer;
+            /* Pointer cursor on hover */
+            border-radius: 5px;
+            /* Slightly rounded corners for the button */
+        }
+
+        /* Style for the image on hover to show a full-size preview */
+        .image-wrapper img:hover {
+            cursor: zoom-in;
+            /* Indicates that the image can be clicked to zoom */
+            /* You can add additional styles here for the hover effect */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>BingoBook</h1>
+
+    <!-- Form for submitting data -->
+    <form id="dataForm">
+        <input type="text" name="firstName" placeholder="First Name" required><br>
+        <input type="text" name="lastName" placeholder="Last Name" required><br>
+        <input type="number" name="roomNumber" placeholder="Room Number" required><br>
+        <textarea name="additionalText" placeholder="Additional Text"></textarea><br>
+        <input type="file" name="images" multiple><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <input type="search" id="searchBar" style="float:right" placeholder="Search entries...">
+    <!-- Table for displaying data -->
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Room Number</th>
+                <th>Additional Text</th>
+                <th>Images</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be inserted here -->
+        </tbody>
+    </table>
+
+
+    <!-- Add your JavaScript file link here -->
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch('/submit-data', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    console.log('Data submitted successfully');
+                    fetchData(); // Refresh the table data
+                    this.reset(); // Reset the form after successful submission
+                } else {
+                    console.error('Submission failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        async function fetchData(searchQuery = '') { // Default parameter if no search query is provided
+            const url = searchQuery ? `/get-data?q=${encodeURIComponent(searchQuery)}` : '/get-data';
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    const tableBody = document.querySelector('#dataTable tbody');
+                    tableBody.innerHTML = ''; // Clear the table before adding new rows
+
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('id', `row-${row.id}`);
+                        tr.innerHTML = `
+                    <td id = "firstNameCell${row.id}"">${row.firstName}</td>
+                    <td id = "lastNameCell${row.id}">${row.lastName}</td>
+                    <td id = "roomNumberCell${row.id}">${row.roomNumber}</td>
+                    <td id = "additionalTextCell${row.id}">
+                        <div id="textDiv${row.id}">
+                        ${row.additionalText}
+                        </div>
+                        <br>
+                        <div id="showTimesheetButtonContainer">
+                        <button id="showTimesheetButton${row.id}" onclick="showTimesheet(${row.id})">Show Timesheet</button>
+                        </div>
+                        <br>
+                        <div id="timesheet-container-${row.id}"></div>
+                    </td>
+                    <td></td>
+                `;
+                        tableBody.appendChild(tr);
+                        const imagesCell = tr.children[4];
+                        const images = JSON.parse(row.images || '[]');
+                        images.forEach(imagePath => {
+                            appendImageToCell(imagesCell, imagePath, row.id);
+                        });
+
+                        const addImageButton = document.createElement('button');
+                        addImageButton.textContent = '+ Add Image';
+                        addImageButton.onclick = function () {
+                            document.getElementById(`image-upload-${row.id}`).click();
+                        };
+                        imagesCell.appendChild(addImageButton);
+
+                        const imageInput = document.createElement('input');
+                        imageInput.type = 'file';
+                        imageInput.style.display = 'none';
+                        imageInput.id = `image-upload-${row.id}`;
+                        imageInput.multiple = true;
+                        imageInput.onchange = function (event) {
+                            if (event.target.files.length > 0) {
+                                handleImageUpload(row.id, event.target.files, imagesCell);
+                            }
+                        };
+                        imagesCell.appendChild(imageInput);
+
+                        createActionsCell(tr, row.id);
+                        tableBody.appendChild(tr);
+                    });
+                } else {
+                    console.error(`Failed to fetch data: ${response.status}`);
+                }
+            } catch (error) {
+                console.error(`Fetch error: ${error}`);
+            }
+        }
+        // Separate function to create the actions cell
+        function createActionsCell(tr, id) {
+            const actionsCell = document.createElement('td');
+            actionsCell.setAttribute('id', `actionsCell${id}`)
+            const editBtn = document.createElement('button');
+            editBtn.setAttribute('id', `editRowButton${id}`)
+            editBtn.textContent = 'Edit';
+            editBtn.onclick = function () { editRow(id); };
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.setAttribute('id', `deleteRowButton${id}`)
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = function () { deleteRow(id); };
+            actionsCell.appendChild(deleteBtn);
+
+            tr.appendChild(actionsCell);
+        }
+
+        // The editRow function might open a modal or form to edit the entry
+        function editRow(id) {
+            //hide the timesheets
+            hideTimesheet(id);
+            //hide the button too until cancelEdit
+            document.querySelector(`#showTimesheetButton${id}`).setAttribute('style', "display:none");
+            const row = document.querySelector(`#row-${id}`); // Make sure each row has an ID like `row-${id}`
+            const cells = row.querySelectorAll('td');
+
+            // Save current data
+            const firstName = cells[0].innerText;
+            const lastName = cells[1].innerText;
+            const roomNumber = cells[2].innerText;
+            console.log(cells[3].querySelector(`#textDiv${id}`).innerText);
+            const additionalText = cells[3].querySelector(`#textDiv${id}`).innerText;
+
+            // Replace text with input fields
+            cells[0].innerHTML = `<input type="text" value="${firstName}" id="edit-firstName-${id}">`;
+            cells[1].innerHTML = `<input type="text" value="${lastName}" id="edit-lastName-${id}">`;
+            cells[2].innerHTML = `<input type="number" value="${roomNumber}" id="edit-roomNumber-${id}">`;
+            cells[3].querySelector(`#textDiv${id}`).innerHTML = `<textarea id="edit-additionalText-${id}">${additionalText}</textarea>`;
+
+            // Replace the 'Edit' and 'Delete' buttons with 'Submit' and 'Cancel' buttons
+            cells[5].innerHTML = `
+        <button onclick="submitEdit(${id})">Submit</button>
+        <button onclick="cancelEdit(${id}, '${firstName}', '${lastName}', '${roomNumber}', '${additionalText}')">Cancel</button>
+    `;
+        }
+
+        // Function to handle the cancellation of an edit
+        function cancelEdit(id, firstName, lastName, roomNumber, additionalText) {
+            const row = document.querySelector(`#row-${id}`);
+            const cells = row.querySelectorAll('td');
+
+            // Replace inputs with the original text
+            cells[0].innerText = firstName;
+            cells[1].innerText = lastName;
+            cells[2].innerText = roomNumber;
+            cells[3].querySelector(`#textDiv${id}`).innerText = additionalText;
+
+            // Replace the 'Submit' and 'Cancel' buttons back to 'Edit' and 'Delete'
+            cells[5].innerHTML = `
+        <button onclick="editRow(${id})">Edit</button>
+        <button onclick="deleteRow(${id})">Delete</button>
+    `;
+            //reset the show timesheet button
+            document.getElementById(`showTimesheetButton${id}`).setAttribute('style', 'display:block');
+        }
+
+        // Function to handle the submission of an edit
+        function submitEdit(id) {
+            const firstName = document.querySelector(`#edit-firstName-${id}`).value;
+            const lastName = document.querySelector(`#edit-lastName-${id}`).value;
+            const roomNumber = document.querySelector(`#edit-roomNumber-${id}`).value;
+            const additionalText2 = document.querySelector(`#edit-additionalText-${id}`).value;
+
+            // On success, update the row with new values
+            // On failure, possibly show an error message
+
+            // Assuming the update is successful, you can then call cancelEdit to reset the row
+            // (or refresh the data entirely with fetchData())
+            cancelEdit(id, firstName, lastName, roomNumber, additionalText2);
+        }
+
+
+        // The deleteRow function sends a request to the server to delete the entry
+        async function deleteRow(id) {
+            const requestBody = JSON.stringify({ id: id });
+            console.log(requestBody); // Log the request body to inspect it
+
+            try {
+                const response = await fetch('/delete-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: requestBody
+                });
+
+                if (response.ok) {
+                    document.getElementById(`row-${id}`).remove();
+                    console.log('Row deleted successfully');
+
+                } else {
+                    console.error('Failed to delete row:', response.status);
+                }
+            } catch (error) {
+                console.error('Error deleting row:', error);
+            }
+        }
+
+
+        window.onload = function () {
+            fetchData();
+        };
+
+        // Function to handle the submission of an edit
+        async function submitEdit(id) {
+            const firstNameInput = document.querySelector(`#edit-firstName-${id}`);
+            const lastNameInput = document.querySelector(`#edit-lastName-${id}`);
+            const roomNumberInput = document.querySelector(`#edit-roomNumber-${id}`);
+            const additionalTextInput = document.querySelector(`#edit-additionalText-${id}`);
+
+            const updatedData = {
+                id: id, // Make sure to send the id for the server to know which entry to update
+                firstName: firstNameInput.value,
+                lastName: lastNameInput.value,
+                roomNumber: roomNumberInput.value,
+                additionalText: additionalTextInput.value
+            };
+
+            try {
+                const response = await fetch('/update-data', { // Replace with your actual endpoint
+                    method: 'POST', // or 'PUT', if your API uses RESTful conventions
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('Update successful', responseData);
+
+                    // Assuming the update is successful, reset the row to show updated values
+                    cancelEdit(id, updatedData.firstName, updatedData.lastName, updatedData.roomNumber, updatedData.additionalText);
+                } else {
+                    console.error('Update failed', response.status, await response.text());
+                    // Here you could also call cancelEdit or inform the user of the failure
+                }
+            } catch (error) {
+                console.error('Error submitting edit:', error);
+            }
+        }
+
+        async function deleteImage(entryId, imageName) {
+            if (!confirm('Are you sure you want to delete this image?')) return;
+
+            const imagePath = `${imageName}`;
+            console.log('attempting to delete image at ' + imagePath);
+
+            try {
+                const response = await fetch('/delete-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // Make sure to send the correct object with entryId and imageName
+                    body: JSON.stringify({ entryId, imageName })
+                });
+
+                if (response.ok) {
+                    console.log('Image deleted successfully');
+
+                    const imageElements = document.querySelectorAll(`img[src$="${imagePath}"]`);
+                    imageElements.forEach(img => {
+                        const imageWrapper = img.closest('.image-wrapper');
+                        if (imageWrapper) {
+                            imageWrapper.remove();
+                        }
+                    });
+                    fetchData();
+                } else {
+                    console.error('Failed to delete image:', response.status);
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+            }
+        }
+
+        // Function to add an image
+        async function addImage(entryId, imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            formData.append('entryId', entryId);
+
+            // Send a request to the server to add the image
+            try {
+                const response = await fetch('/add-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    console.log('Image added successfully');
+                    fetchData(); // Refresh the table data
+                } else {
+                    console.error('Failed to add image:', response.status);
+                }
+            } catch (error) {
+                console.error('Error adding image:', error);
+            }
+        }
+
+        async function handleImageUpload(entryId, files, imagesCell) {
+            const formData = new FormData();
+            for (const file of files) {
+                formData.append('images', file); // 'images' to match the array expected on the server
+            }
+            formData.append('entryId', entryId);
+
+            console.log(`Sending to /add-image with entryId: ${entryId}`); // Debug log
+
+            try {
+                const response = await fetch('/add-image', {
+                    method: 'POST',
+                    body: formData, // 'Content-Type': 'multipart/form-data' is set automatically with FormData
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.success) {
+                        // Clear the existing images before appending the updated list
+                        imagesCell.innerHTML = '';
+                        responseData.images.forEach(imagePath => {
+                            appendImageToCell(imagesCell, imagePath, entryId);
+                        });
+                        // Re-append the Add Image button after updating the images
+                        const addImageButton = createAddImageButton(entryId);
+                        imagesCell.appendChild(addImageButton);
+                    } else {
+                        console.error('Failed to update images:', responseData.error);
+                    }
+                } else {
+                    console.error('Failed to add image:', response.status);
+                }
+            } catch (error) {
+                console.error('Error adding image:', error);
+            }
+        }
+
+        function createAddImageButton(entryId) {
+            const addImageButton = document.createElement('button');
+            addImageButton.textContent = '+ Add Image';
+            addImageButton.onclick = function () {
+                document.getElementById(`image-upload-${entryId}`).click();
+            };
+            return addImageButton;
+        }
+        // Call this function after appending all new image elements
+        function appendAddImageInput(imagesCell, entryId) {
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.style.display = 'none';
+            imageInput.id = `image-upload-${entryId}`;
+            imageInput.multiple = true;
+            imageInput.onchange = function (event) {
+                if (event.target.files.length > 0) {
+                    handleImageUpload(entryId, event.target.files, imagesCell);
+                }
+            };
+            imagesCell.appendChild(imageInput);
+        }
+
+        function createImageElement(imagePath, entryId) {
+            const imageWrapper = document.createElement('div');
+            imageWrapper.classList.add('image-wrapper');
+            imageWrapper.style.position = 'relative';
+
+            const img = document.createElement('img');
+            img.src = imagePath;
+            img.alt = 'Uploaded Image';
+            img.height = 100; // or other dimensions as required
+            imageWrapper.appendChild(img);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-image');
+            deleteButton.textContent = 'X';
+            deleteButton.onclick = function () {
+                deleteImage(entryId, imagePath.split('/').pop());
+            };
+            imageWrapper.appendChild(deleteButton);
+
+            return imageWrapper; // The complete image wrapper to be inserted
+        }
+
+        // Function to create and append image elements to the images cell
+        function appendImageToCell(imagesCell, imagePath, rowId) {
+            const imageWrapper = document.createElement('div');
+            imageWrapper.classList.add('image-wrapper');
+            imageWrapper.style.position = 'relative';
+            const img = document.createElement('img');
+            img.src = imagePath;
+            img.alt = 'Uploaded Image';
+            img.height = 100;
+            imageWrapper.appendChild(img);
+            addHoverEffectToImages(imagesCell);
+            setupHoverEffectDelegation(imagesCell);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-image');
+            deleteButton.textContent = 'X';
+            deleteButton.onclick = function () {
+                deleteImage(rowId, imagePath.split('/').pop());
+            };
+            imageWrapper.appendChild(deleteButton);
+
+            imagesCell.appendChild(imageWrapper);
+        }
+
+        // Function to create and show the full-size image preview
+        function showImagePreview(imagePath) {
+            // Create a container for the full-size image if it doesn't already exist
+            let previewContainer = document.querySelector('.image-preview');
+            if (!previewContainer) {
+                previewContainer = document.createElement('div');
+                previewContainer.classList.add('image-preview');
+                document.body.appendChild(previewContainer);
+            }
+
+            // Create the full-size image element
+            const img = document.createElement('img');
+            img.src = imagePath;
+            previewContainer.innerHTML = ''; // Clear any previous images
+            previewContainer.appendChild(img);
+
+            // Show the preview container
+            previewContainer.style.display = 'block';
+        }
+
+        // Function to hide the full-size image preview
+        function hideImagePreview() {
+            const previewContainer = document.querySelector('.image-preview');
+            if (previewContainer) {
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        // Add mouseenter event listener to each image in the images cell
+        function addHoverEffectToImages(imagesCell) {
+            const imgs = imagesCell.querySelectorAll('img');
+            imgs.forEach(img => {
+                img.addEventListener('mouseenter', () => {
+                    showImagePreview(img.src);
+                });
+                img.addEventListener('mouseleave', hideImagePreview);
+            });
+        }
+
+        // Attach event listeners to the images cell for delegation
+        function setupHoverEffectDelegation(imagesCell) {
+            imagesCell.addEventListener('mouseenter', (event) => {
+                if (event.target.tagName === 'IMG') {
+                    showImagePreview(event.target.src);
+                }
+            }, true); // Use capturing phase to ensure the event is captured as it descends through the DOM
+
+            imagesCell.addEventListener('mouseleave', (event) => {
+                if (event.target.tagName === 'IMG') {
+                    hideImagePreview();
+                }
+            }, true); // Use capturing phase here as well
+        }
+
+        document.getElementById('searchBar').addEventListener('input', function (event) {
+            fetchData(event.target.value.trim());
+        });
+
+        async function showTimesheet(rowId) {
+            // Check if the timesheet table already exists
+            let table = document.getElementById(`timesheet-${rowId}`);
+            // If the table does not exist, create it and append to a specific container
+            if (!table) {
+                table = document.createElement('table');
+                table.id = `timesheet-${rowId}`;
+                // Add headers to the table
+                table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Room Number</th>
+                    <th><button  onclick="handleSignIn(${rowId})">Sign In</button></th>
+                    <th><button onclick="handleSignOut(${rowId})">Sign Out</button></th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Timesheet rows will be added here -->
+            </tbody>
+        `;
+                // Append the new table to the main container or another suitable element
+                document.querySelector('#timesheet-container-' + rowId).appendChild(table);
+
+            }
+            //Set Show Timesheet button to Hide Timesheet
+            document.getElementById("showTimesheetButton" + rowId).textContent = "Hide Timesheet"
+            document.getElementById("showTimesheetButton" + rowId).setAttribute("onclick", "hideTimesheet(" + rowId + ")")
+
+            // Fetch timesheet data and populate the table
+            fetch(`/timesheets/${rowId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = table.querySelector('tbody');
+                    let tbodyHTML = '';
+                    data.forEach(row => {
+                        tbodyHTML += `<tr>
+                        <td id="room-number-cell-${rowId}-${row.timesheetRow}">${row.roomNumber || ''}</td>
+                        <td id="sign-in-cell-${rowId}-${row.timesheetRow}">${row.signIn || ''}</td>
+                        <td id="sign-out-cell-${rowId}-${row.timesheetRow}">${row.signOut || ''}</td>
+                        <td id="actions-cell-${rowId}-${row.timesheetRow}">
+                            <button onclick="editTimesheetRow(${rowId},${row.timesheetRow})">Edit</button>
+                            <button onclick="deleteTimesheetRow(${rowId},${row.timesheetRow})">Delete</button>
+                        </td>
+                    </tr>`;
+                    });
+                    tbody.innerHTML = tbodyHTML; // Update the table body with the new rows
+                    table.style.display = 'block'; // Make the table visible
+                })
+                .catch(error => console.error('Error fetching timesheet data:', error));
+        }
+
+        function hideTimesheet(rowId) {
+            const timesheet = document.getElementById(`timesheet-${rowId}`);
+            if (timesheet) {
+                timesheet.remove();
+            }
+            document.getElementById(`showTimesheetButton${rowId}`).textContent = "Show Timesheet";
+            document.getElementById(`showTimesheetButton${rowId}`).setAttribute("onclick", "showTimesheet(" + rowId + ")");
+
+        }
+
+        async function getCurrentRow(rowId) {
+            try {
+                const response = await fetch(`/timesheets/get-current-row/${rowId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data; // This will be your row object
+            } catch (error) {
+                console.error('Error fetching current row:', error);
+            }
+        }
+
+        async function handleSignIn(rowId) {
+            const currentRow = await getCurrentRow(rowId);
+            console.log("currentRow signIn: ", currentRow);
+
+            // Now you can check if the signIn value exists
+            if (currentRow && currentRow.signIn != '' && currentRow.signIn != null) {
+                // Prompt user if they would like to start a new row
+                if (confirm("There is already a sign-in value. Would you like to start a new row?")) {
+                    // Code to handle the creation of a new row
+                    submitSignIn(rowId, currentRow, true);
+                }
+            } else{
+                //if input fields already exist, do nothing
+                if(document.getElementById(`room-number-input-${rowId}`))
+                {
+                    //console.log(document.getElementById(`room-number-input-${rowId}`) + "already exists");
+                    return;
+                }
+                
+                // Create input fields for room number and sign-in time
+                const roomNumberInput = document.createElement('input');
+                roomNumberInput.type = 'number';
+                roomNumberInput.id = `room-number-input-${rowId}`;
+                roomNumberInput.value = currentRow.roomNumber;
+
+                const signInInput = document.createElement('input');
+                signInInput.type = 'datetime-local';
+                signInInput.id = `sign-in-input-${rowId}`;
+                signInInput.value = new Date().toISOString().slice(0, 16); // Format for datetime-local
+
+                // Append the inputs to the current row
+                console.log("querying " + `room-number-cell-${rowId}-${currentRow.timesheetRow} where rowId = ${rowId} and timesheetRow = ${currentRow.timesheetRow} which returns ${document.querySelector(`#room-number-cell-${rowId}-${currentRow.timesheetRow}`)}`);
+
+                const roomNumberCell = document.querySelector(`#room-number-cell-${rowId}-${currentRow.timesheetRow}`);
+                const signInCell = document.querySelector(`#sign-in-cell-${rowId}-${currentRow.timesheetRow}`); // Use the correct class or identifier for your cells
+
+                console.log(roomNumberCell);
+                roomNumberCell.appendChild(roomNumberInput);
+                console.log(signInCell);
+                signInCell.appendChild(signInInput);
+
+                // Create OK and Cancel buttons
+                const okButton = document.createElement('button');
+                okButton.textContent = 'OK';
+                okButton.setAttribute('id', `okButton-${rowId}`)
+                okButton.onclick = function () { submitSignIn(rowId, currentRow, false); };
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Cancel';
+                cancelButton.setAttribute('id', `cancelButton-${rowId}`)
+                cancelButton.onclick = function () { cancelSignIn(rowId); };
+
+                // Append buttons to the sign-in cell or a dedicated actions cell
+                signInCell.appendChild(okButton);
+                signInCell.appendChild(cancelButton);
+
+            }
+        }
+
+        function submitSignIn(rowId, timesheetRow, newRow) {
+            if (newRow) {
+                //console.log(`new row submitSignIn(${rowId},${timesheetRow.timesheetRow},${newRow})`);
+                fetch('/timesheets/newRow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            entryId: rowId,
+                            timesheetRow: timesheetRow.timesheetRow + 1
+                        }
+                    )
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle success
+                        console.log('SignIn new row successful:', data);
+                        // You may want to refresh the timesheet display or update the row to show the sign-in time
+                        showTimesheet(rowId);
+                        handleSignIn(rowId);
+
+                    })
+                    .catch(error => {
+                        // Handle errors
+                        console.error('Error during sign-in:', error);
+                    })
+            }
+            else {
+                console.log("update row");
+                //console.log(document.getElementById(`.room-number-input-${rowId}`).value);
+                const roomNumber = document.getElementById(`room-number-input-${rowId}`).value;
+                //console.log(document.getElementById(`.sign-in-input-${rowId}`).value);
+                const signIn = document.getElementById(`sign-in-input-${rowId}`).value;
+                // Send the data to the server
+                fetch('/timesheets/signIn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            entryId: rowId,
+                            timesheetRow: timesheetRow.timesheetRow,
+                            roomNumber: roomNumber,
+                            signIn: signIn,
+                        }
+                    )
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle success
+                        // You may want to refresh the timesheet display or update the row to show the sign-in time
+                        showTimesheet(rowId);
+                    })
+                    .catch(error => {
+                        // Handle errors
+                        console.error('Error during sign-in:', error);
+                    })
+            }
+        }
+
+
+        function cancelSignIn(rowId) {
+            // Remove the input fields and buttons
+            const roomInput = document.getElementById(`room-number-input-${rowId}`);
+            const signInInput = document.getElementById(`sign-in-input-${rowId}`);
+            roomInput.remove();
+            signInInput.remove();
+            document.querySelector(`#okButton-${rowId}`).remove();
+            document.querySelector(`#cancelButton-${rowId}`).remove();
+        }
+
+
+        async function getDateTimeInput(rowId, currentRow) {
+            // Create a Promise that will resolve with the datetime value when submitted
+            const datetimePromise = new Promise((resolve) => {
+                // Create the datetime-local input element
+                const datetimeInput = document.createElement('input');
+                datetimeInput.type = 'datetime-local';
+                datetimeInput.id = 'datetimeInput';
+                datetimeInput.value = new Date().toISOString().slice(0, 16);
+
+                // Create a submit button
+                const submitButton = document.createElement('button');
+                submitButton.textContent = 'Submit';
+
+                const signOutCell = document.querySelector(`#sign-out-cell-${rowId}-${currentRow.timesheetRow}`);
+                console.log(signOutCell);
+                // Append the datetime input and submit button to the DOM
+                signOutCell.appendChild(datetimeInput);
+                signOutCell.appendChild(submitButton);
+
+                // Event listener for the submit button
+                submitButton.addEventListener('click', () => {
+                    if (datetimeInput.value) { // Check if the input is not empty
+                        resolve(datetimeInput.value); // Resolve the promise with the input value
+                        datetimeInput.remove(); // Optionally remove the input from the DOM
+                        submitButton.remove(); // Remove the submit button from the DOM
+                    } else {
+                        alert('Please enter a date and time.'); // Prompt the user to enter the datetime
+                    }
+                });
+            });
+
+            // Wait for the promise to resolve with the datetime value
+            const datetimeValue = await datetimePromise;
+            console.log('Datetime selected:', datetimeValue);
+            return datetimeValue; // You can now use this value in your function
+        }
+        async function handleSignOut(rowId) {
+            try {
+                // Fetch the current row to ensure there's a sign-in before signing out
+                const currentRow = await getCurrentRow(rowId);
+                if (!currentRow.signIn) {
+                    alert("No sign-in recorded for the current session. Please sign in first.");
+                    return;
+                }
+
+                // Confirm sign-out
+                if (currentRow.signOut != null) {
+                    alert("The current row already has a sign out time. Use the edit button to change the value or click the sign in button to create a new row.");
+                    return;
+                }
+                //if there is already a date input, exit the function
+                if(document.getElementById('datetimeInput'))
+                {
+                    console.log('datetimeInput already exists');
+                    return;
+                }
+                if (!confirm("Confirm sign-out?")) {
+                    return; // If the user does not confirm, exit the function early
+                }
+
+                // Get the sign-out time input from the user
+                const signOutTime = await getDateTimeInput(rowId, currentRow);
+                if (!signOutTime) {
+                    alert("Sign-out time is required.");
+                    return;
+                }
+
+                // Post the sign-out data to the server
+                const response = await fetch('/timesheets/signOut', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ entryId: rowId, timesheetRow: currentRow.timesheetRow, signOut: signOutTime }),
+                });
+                console.log(JSON.stringify({ entryId: rowId, timesheetRow: currentRow.timesheetRow, signOut: signOutTime }));
+
+                // Check the response from the server
+                if (!response.ok) {
+                    const errorMessage = await response.text();
+                    throw new Error(`Failed to sign out: ${errorMessage}`);
+                }
+
+                // Optionally add a new row now that the sign-out was successful
+                const newRowResponse = await fetch('/timesheets/newRow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ entryId: rowId, timesheetRow: currentRow.timesheetRow + 1 }),
+                });
+
+                if (!newRowResponse.ok) {
+                    const errorMessage = await newRowResponse.text();
+                    throw new Error(`Failed to create a new row: ${errorMessage}`);
+                }
+
+                // Refresh the timesheet to reflect changes
+                showTimesheet(rowId);
+
+            } catch (error) {
+                console.error('Error during sign-out process:', error);
+                alert('There was a problem with the sign-out process.');
+            }
+        }
+        function deleteTimesheetRow(rowId, timesheetRow) {
+            fetch(`/timesheets/deleteRow`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entryId: rowId, timesheetRow: timesheetRow })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Delete row successful:', data);
+                    // Handle the UI update or refresh after deletion
+                })
+                .catch(error => {
+                    console.error('Error during delete:', error);
+                });
+            showTimesheet(rowId);
+        }
+
+        function editTimesheetRow(rowId, timesheetRow) {
+            // Get the existing cell values
+            const roomNumberCell = document.querySelector(`#room-number-cell-${rowId}-${timesheetRow}`);
+            const signInCell = document.querySelector(`#sign-in-cell-${rowId}-${timesheetRow}`);
+            const signOutCell = document.querySelector(`#sign-out-cell-${rowId}-${timesheetRow}`);
+            const actionsCell = document.querySelector(`#actions-cell-${rowId}-${timesheetRow}`);
+
+            // Store the current values
+            const currentRoomNumber = roomNumberCell.innerText;
+            const currentSignIn = signInCell.innerText;
+            const currentSignOut = signOutCell.innerText;
+
+            // Create form fields with the original values
+            roomNumberCell.innerHTML = `<input type="number" id="edit-room-number-${rowId}-${timesheetRow}" value="${currentRoomNumber}">`;
+            signInCell.innerHTML = `<input type="datetime-local" id="edit-sign-in-${rowId}-${timesheetRow}" value="${currentSignIn}">`;
+            signOutCell.innerHTML = `<input type="datetime-local" id="edit-sign-out-${rowId}-${timesheetRow}" value="${currentSignOut}">`;
+
+            // Replace the "Edit" and "Delete" buttons with "Submit" and "Cancel" buttons
+            actionsCell.innerHTML = `
+        <button onclick="submitTimesheetEdit(${rowId}, ${timesheetRow})">Submit</button>
+        <button onclick="cancelTimesheetEdit(${rowId}, ${timesheetRow}, '${currentRoomNumber}', '${currentSignIn}', '${currentSignOut}')">Cancel</button>
+    `;
+        }
+
+        function submitTimesheetEdit(rowId, timesheetRow) {
+            // Get the new input values
+            const newRoomNumber = document.querySelector(`#edit-room-number-${rowId}-${timesheetRow}`).value;
+            const newSignIn = document.querySelector(`#edit-sign-in-${rowId}-${timesheetRow}`).value;
+            const newSignOut = document.querySelector(`#edit-sign-out-${rowId}-${timesheetRow}`).value;
+
+            // Send the updated values to the server
+            fetch('/timesheets/updateRow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    entryId: rowId,
+                    timesheetRow: timesheetRow,
+                    roomNumber: newRoomNumber,
+                    signIn: newSignIn,
+                    signOut: newSignOut
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // On success, refresh the timesheet display for that row
+                    showTimesheet(rowId);
+                })
+                .catch(error => {
+                    console.error('Error updating timesheet:', error);
+                });
+        }
+
+        function cancelTimesheetEdit(rowId, timesheetRow, originalRoomNumber, originalSignIn, originalSignOut) {
+            // Revert the cells back to text with the original values
+            const roomNumberCell = document.querySelector(`#room-number-cell-${rowId}-${timesheetRow}`);
+            const signInCell = document.querySelector(`#sign-in-cell-${rowId}-${timesheetRow}`);
+            const signOutCell = document.querySelector(`#sign-out-cell-${rowId}-${timesheetRow}`);
+            const actionsCell = document.querySelector(`#actions-cell-${rowId}-${timesheetRow}`);
+
+            roomNumberCell.innerText = originalRoomNumber;
+            signInCell.innerText = originalSignIn;
+            signOutCell.innerText = originalSignOut;
+
+            // Revert the buttons back to "Edit" and "Delete"
+            actionsCell.innerHTML = `
+        <button onclick="editTimesheetRow(${rowId}, ${timesheetRow})">Edit</button>
+        <button onclick="deleteTimesheetRow(${rowId}, ${timesheetRow})">Delete</button>
+    `;
+        }
+
+
+
+
+
+    </script>
+</body>
+
+</html>
